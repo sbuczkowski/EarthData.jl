@@ -3,6 +3,9 @@ uuid = "32d31d3c-8f54-4887-b93f-916378c107c0"
 authors = ["Steven Buczkowski"]
 version = "0.1.0"
 
+[deps]
+LibCURL = "b27032c2-a3e7-50c8-80cd-2d36dbcbfd21"
+
 [compat]
 julia = "1.8"
 
