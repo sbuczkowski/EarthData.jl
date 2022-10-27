@@ -4,8 +4,10 @@ authors = ["Steven Buczkowski"]
 version = "0.1.0"
 
 [deps]
+AWS = "fbe9abb3-538b-5e4e-ba9e-bc94f4f92ebc"
 JSON = "682c06a0-de6a-54ab-a142-c8b1cf79cde6"
 LibCURL = "b27032c2-a3e7-50c8-80cd-2d36dbcbfd21"
+TimeZones = "f269a46b-ccf7-5d73-abea-4c690281aa53"
 
 [compat]
 julia = "1.8"
