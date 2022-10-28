@@ -10,6 +10,7 @@ LibCURL = "b27032c2-a3e7-50c8-80cd-2d36dbcbfd21"
 TimeZones = "f269a46b-ccf7-5d73-abea-4c690281aa53"
 
 [compat]
+AWS = "1"
 julia = "1.8"
 
 [extras]
