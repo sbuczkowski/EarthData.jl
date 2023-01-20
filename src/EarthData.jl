@@ -29,43 +29,43 @@ end
 # with EarthData creds
 function earthdata_get_s3credentials()::AWSCredentials
 
-# Set user Earthdata login info locations
-userhome = ENV["HOME"]
-netrcpath=joinpath(userhome,".netrc")
-cookiefile=joinpath(userhome,".urs_cookies")
-
-# Set up curl options for the Earthdata web query
-curl = curl_easy_init()
-curl_easy_setopt(curl, CURLOPT_URL, "https://data.gesdisc.earthdata.nasa.gov/s3credentials")
-curl_easy_setopt(curl, CURLOPT_NETRC, CURL_NETRC_REQUIRED)
-curl_easy_setopt(curl, CURLOPT_NETRC_FILE, netrcpath)
-curl_easy_setopt(curl, CURLOPT_COOKIEFILE, cookiefile)
-curl_easy_setopt(curl, CURLOPT_COOKIEJAR, cookiefile)
-curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1)
+    # Set user Earthdata login info locations
+    userhome = ENV["HOME"]
+    netrcpath=joinpath(userhome,".netrc")
+    cookiefile=joinpath(userhome,".urs_cookies")
+    
+    # Set up curl options for the Earthdata web query
+    curl = curl_easy_init()
+    curl_easy_setopt(curl, CURLOPT_URL, "https://data.gesdisc.earthdata.nasa.gov/s3credentials")
+    curl_easy_setopt(curl, CURLOPT_NETRC, CURL_NETRC_REQUIRED)
+    curl_easy_setopt(curl, CURLOPT_NETRC_FILE, netrcpath)
+    curl_easy_setopt(curl, CURLOPT_COOKIEFILE, cookiefile)
+    curl_easy_setopt(curl, CURLOPT_COOKIEJAR, cookiefile)
+    curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1)
 
     c_curl_write_cb = @cfunction(curl_write_cb, Csize_t, (Ptr{Cvoid}, Csize_t, Csize_t, Ptr{Cvoid}))
-curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, c_curl_write_cb)
-buffer = UInt8[]
-curl_easy_setopt(curl, CURLOPT_WRITEDATA, pointer_from_objref(buffer))
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, c_curl_write_cb)
+    buffer = UInt8[]
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, pointer_from_objref(buffer))
 
-# post the query and fill buffer with the JSON data as a string
-GC.@preserve buffer begin
-    res = curl_easy_perform(curl)
-end
+    # post the query and fill buffer with the JSON data as a string
+    GC.@preserve buffer begin
+        res = curl_easy_perform(curl)
+    end
 
-# parse into formal JSON struct
+    # parse into formal JSON struct
 
     j = JSON.parse(String(buffer))
 
     # Replace AWSCredential fields as required with new values from EarthData
-awscred = AWSCredentials()
+    awscred = AWSCredentials()
     awscred.access_key_id = j["accessKeyId"]
-awscred.secret_key = j["secretAccessKey"] 
-awscred.expiry = DateTime(ZonedDateTime(j["expiration"], "yyyy-mm-dd HH:MM:SSzzzz"))
+    awscred.secret_key = j["secretAccessKey"] 
+    awscred.expiry = DateTime(ZonedDateTime(j["expiration"], "yyyy-mm-dd HH:MM:SSzzzz"))
     awscred.token = j["sessionToken"]
     awscred.renew = earthdata_get_s3credentials
 
-return awscred
+    return awscred
 end
 
 end
